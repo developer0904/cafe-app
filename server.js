@@ -7,7 +7,9 @@ dotenv.config();
 app.use(express.json());
 
 const db = process.env.DATABASE
-
+app.get("/",(req,res)=>{
+    res.send("Server Phook diya Oye!!");
+})
 mongoose.connect(db).then(()=>{
     
     app.listen(8080, ()=>{
