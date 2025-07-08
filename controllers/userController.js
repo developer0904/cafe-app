@@ -41,7 +41,7 @@ const login = async(req,res)=>{
                 if(isMatch){
 
                     const userObj = {name:user.name,email:user.email,role:user.role}
-                    const token = jwt.sign(userObj,SECRET);
+                    const token = jwt.sign(userObj,SECRET,{expiresIn:'1hr'});
 
                     res.status(200).json({userObj,token});
                     
@@ -115,4 +115,34 @@ const showUsers = async(req,res)=>{
 
 }
 
-export  {register,login,profile,showUsers,deleteUser,updateUser}
+
+const passwordChange = async(req,res)=>{
+
+    try {
+         const id = req.params.id;
+         const {password} = req.body;
+
+         if(!password){
+            return res.status(400).json({message:"Password required!"});
+         }
+
+         const hashedPassword = await bcrypt.hash(password,10);
+         const user = await userModel.findByIdAndUpdate(
+            id,
+            {password: hashedPassword},
+            {new:true}
+         )
+
+         if(!user){
+            res.status(404).json({message:"User not Found!",user});
+         }
+
+         res.status(200).json({message:"Password Update Successful!"});
+       
+    } catch (error) {
+        
+        res.status(500).json({message:"Something went Wrong"});
+    }
+}
+
+export  {register,login,profile,showUsers,deleteUser,updateUser,passwordChange}
