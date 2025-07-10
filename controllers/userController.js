@@ -134,10 +134,10 @@ const passwordChange = async(req,res)=>{
          )
 
          if(!user){
-            res.status(404).json({message:"User not Found!",user});
+            res.status(404).json({message:"User not Found!"});
          }
 
-         res.status(200).json({message:"Password Update Successful!"});
+         res.status(200).json({message:"Password Update Successful!",user});
        
     } catch (error) {
         
@@ -145,4 +145,34 @@ const passwordChange = async(req,res)=>{
     }
 }
 
-export  {register,login,profile,showUsers,deleteUser,updateUser,passwordChange}
+
+const updateProfile = async(req,res)=>{
+
+        try {
+            
+            const id = req.params.id;
+            const {name,email,role} = req.body;
+            
+            if(!name || !email || !role){
+
+                return res.status(404).json({message:"Enter a valid detail"});
+            }
+
+            const user = await userModel.findByIdAndUpdate(
+                id,
+                {name:name, email:email, role:role},
+                {new:true}
+
+            )
+            if(!user){
+                res.status(404).json({message:"update not found!"});
+            }
+
+            res.status(200).json({message:"Update Sccessfull"});
+        } catch (error) {
+            res.status(501).json({message:"Something went wrong"});
+        }
+    
+}
+
+export  {register,login,profile,showUsers,deleteUser,updateUser,passwordChange,updateProfile}
